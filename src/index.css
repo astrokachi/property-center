@@ -1,0 +1,593 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+	font-family: "DM Sans", sans-serif;
+}
+
+.dm {
+	font-family: "DM Sans", sans-serif;
+}
+
+.inter {
+	font-family: "Inter", sans-serif;
+}
+
+.raleway {
+	font-family: "Raleway", sans-serif;
+}
+
+.source-sans {
+	font-family: "Source Sans 3", sans-serif;
+}
+
+.btn-trans {
+	transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trans {
+	transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Modern button hover effects */
+.btn-hover {
+	position: relative;
+	overflow: hidden;
+}
+
+.btn-hover:after {
+	content: '';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+	opacity: 0;
+	transition: opacity 200ms ease;
+}
+
+.btn-hover:hover:after {
+	opacity: 1;
+}
+
+/* Subtle link hover effects */
+.link-hover {
+	position: relative;
+}
+
+.link-hover:after {
+	content: '';
+	position: absolute;
+	width: 100%;
+	transform: scaleX(0);
+	height: 2px;
+	bottom: -2px;
+	left: 0;
+	background: currentColor;
+	transform-origin: center;
+	transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.link-hover:hover:after {
+	transform: scaleX(1);
+}
+
+.hide-scroll::-webkit-scrollbar {
+	width: 0em;
+	/* Adjust the width as needed */
+}
+
+
+.dropdown {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+/* Custom Animations for Features Section */
+.feature-card {
+	animation: fade-out 0.5s ease forwards;
+}
+
+.feature-visible {
+	animation: fade-in 0.8s ease forwards;
+}
+
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fade-out {
+	0% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	100% {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+}
+
+/* Hero Section Animations */
+.hero-entrance {
+	animation: hero-fade-in 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.slide-in-left {
+	opacity: 0;
+	transform: translateX(-20px);
+	animation: slide-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.fade-in-up {
+	opacity: 0;
+	transform: translateY(20px);
+	animation: fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.scale-in {
+	opacity: 0;
+	transform: scale(0.95);
+	animation: scale-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes hero-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slide-in {
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes fade-up {
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes scale-in {
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/* Sophisticated Hero Animations */
+.hero-fade-in {
+	opacity: 0;
+	animation: sophisticated-fade 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-title-reveal {
+	opacity: 0;
+	transform: translateY(1rem);
+	animation: sophisticated-title 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-image-reveal {
+	clip-path: inset(0 100% 0 0);
+	animation: sophisticated-image 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-content-reveal {
+	opacity: 0;
+	filter: blur(4px);
+	animation: sophisticated-content 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-stats-reveal {
+	opacity: 0;
+	transform: translateY(1rem) scale(0.98);
+	animation: sophisticated-stats 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes sophisticated-fade {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes sophisticated-title {
+	from {
+		opacity: 0;
+		transform: translateY(1rem);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes sophisticated-image {
+	from {
+		clip-path: inset(0 100% 0 0);
+	}
+
+	to {
+		clip-path: inset(0 0 0 0);
+	}
+}
+
+@keyframes sophisticated-content {
+	from {
+		opacity: 0;
+		filter: blur(4px);
+	}
+
+	to {
+		opacity: 1;
+		filter: blur(0);
+	}
+}
+
+@keyframes sophisticated-stats {
+	from {
+		opacity: 0;
+		transform: translateY(1rem) scale(0.98);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* Glass Morphism Effects */
+.glass-effect {
+	backdrop-filter: blur(8px);
+	background: rgba(255, 255, 255, 0.8);
+}
+
+.glass-effect-dark {
+	backdrop-filter: blur(8px);
+	background: rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced hover transitions */
+.hover-lift {
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+	transform: translateY(-4px);
+}
+
+.image-zoom {
+	transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.image-zoom:hover {
+	transform: scale(1.05);
+}
+
+/* Decorative elements */
+.blur-gradient {
+	background: radial-gradient(circle at center, var(--tw-gradient-from) 0%, transparent 70%);
+	filter: blur(40px);
+	opacity: 0.15;
+}
+
+/* Subtle Hover Effects */
+.subtle-hover {
+	transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.subtle-hover:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.subtle-image-hover {
+	transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+		filter 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.subtle-image-hover:hover {
+	transform: scale(1.02);
+	filter: brightness(1.05);
+}
+
+/* Sophisticated Decorative Elements */
+.grain-overlay {
+	position: absolute;
+	inset: 0;
+	opacity: 0.15;
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+	pointer-events: none;
+	mix-blend-mode: overlay;
+}
+
+.gradient-blur {
+	position: absolute;
+	width: 150%;
+	height: 150%;
+	filter: blur(80px);
+	opacity: 0.15;
+	background: radial-gradient(circle at center,
+			var(--primary-color, #4F46E5) 0%,
+			var(--secondary-color, #9333EA) 50%,
+			transparent 100%);
+	transform: translate(-25%, -25%);
+	pointer-events: none;
+}
+
+/* Sophisticated Glass Effect */
+.glass {
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(8px) saturate(1.2);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Sophisticated Listing Animations */
+.listing-card {
+	opacity: 0;
+	transform: translateY(20px);
+}
+
+.listing-card.visible {
+	animation: listing-reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes listing-reveal {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Elegant Hover Effects */
+.listing-hover {
+	transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.listing-hover:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+/* Sophisticated Image Transitions */
+.listing-image {
+	transform: scale(1.05);
+	transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+		filter 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.listing-hover:hover .listing-image {
+	transform: scale(1);
+	filter: brightness(1.05);
+}
+
+/* Subtle Text Animations */
+.text-reveal {
+	opacity: 0;
+	transform: translateY(10px);
+	animation: text-fade 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes text-fade {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Carousel Animations */
+.carousel-slide {
+	opacity: 0;
+	transform: scale(0.98);
+	transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.carousel-slide.active {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.carousel-button {
+	transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.carousel-button:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+	transform: scale(1.05);
+}
+
+/* Footer Animations */
+.footer-link {
+	position: relative;
+	transition: color 0.3s ease;
+}
+
+.footer-link::after {
+	content: '';
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	width: 100%;
+	height: 1px;
+	background: currentColor;
+	transform: scaleX(0);
+	transform-origin: right;
+	transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-link:hover::after {
+	transform: scaleX(1);
+	transform-origin: left;
+}
+
+/* Best Fit Section Animations */
+.best-fit-card {
+	opacity: 0;
+	transform: translateY(20px) scale(0.98);
+}
+
+.best-fit-card.visible {
+	animation: best-fit-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes best-fit-reveal {
+	from {
+		opacity: 0;
+		transform: translateY(20px) scale(0.98);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* Intersection Observer Animations */
+.fade-in-section {
+	opacity: 0;
+	transform: translateY(20px);
+	transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fade-in-section.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* Sophisticated Animations */
+.fade-in-soft {
+	opacity: 0;
+	animation: fadeInSoft 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.slide-up-soft {
+	opacity: 0;
+	transform: translateY(20px);
+	animation: slideUpSoft 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.scale-in-soft {
+	opacity: 0;
+	transform: scale(0.98);
+	animation: scaleInSoft 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fadeInSoft {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slideUpSoft {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes scaleInSoft {
+	from {
+		opacity: 0;
+		transform: scale(0.98);
+	}
+
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/* Elegant Hover Effects */
+.hover-lift-soft {
+	transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hover-lift-soft:hover {
+	transform: translateY(-4px);
+}
+
+.hover-scale-soft {
+	transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hover-scale-soft:hover {
+	transform: scale(1.02);
+}
+
+/* Scroll-based reveal animations */
+.reveal-on-scroll {
+	opacity: 0;
+	transform: translateY(20px);
+	transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-on-scroll.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* Sophisticated Decorative Elements */
+.elegant-border {
+	position: relative;
+}
+
+.elegant-border::after {
+	content: '';
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	width: 100%;
+	height: 1px;
+	background: linear-gradient(90deg,
+			transparent 0%,
+			rgba(0, 0, 0, 0.1) 50%,
+			transparent 100%);
+}

@@ -1,0 +1,623 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Navbar } from '../components/Navbar';
+import { Footer } from '../components/Footer';
+import '../styles/animations.css';
+
+interface Review {
+  id: string;
+  userName: string;
+  userImage?: string;
+  rating: number;
+  comment: string;
+  date: string;
+  helpful: number;
+  notHelpful: number;
+}
+
+interface ListingDetails {
+  id: string;
+  title: string;
+  type: 'Property' | 'Service';
+  description: string;
+  price: number;
+  location: string;
+  images: string[];
+  features: string[];
+  amenities?: string[];
+  status: 'Available' | 'Reserved' | 'Unavailable';
+  owner: {
+    id: string;
+    name: string;
+    image: string;
+    rating: number;
+    responseTime: string;
+    responseRate: number;
+    contactEmail?: string;
+    contactPhone?: string;
+  };
+  reviews: Review[];
+  createdAt: string;
+  updatedAt: string;
+  views: number;
+}
+
+// Mock data (in a real app, this would be in a separate file)
+const mockListings: Record<string, ListingDetails> = {
+  'property-1': {
+    id: 'property-1',
+    title: 'Luxury Penthouse with City Views',
+    type: 'Property',
+    description: 'Stunning penthouse featuring floor-to-ceiling windows, modern appliances, and panoramic city views. This luxurious space offers the perfect blend of comfort and sophistication.',
+    price: 2500,
+    location: 'Downtown Financial District, 100 Skyline Ave',
+    images: [
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c',
+      'https://images.unsplash.com/photo-1600607687644-aad702816335',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d'
+    ],
+    features: [
+      'Master Suite',
+      'Gourmet Kitchen',
+      'Private Terrace',
+      'Smart Home System',
+      'Wine Cellar',
+      'Home Office'
+    ],
+    amenities: [
+      'Concierge Service',
+      'Infinity Pool',
+      'Private Elevator',
+      'Fitness Center',
+      'Valet Parking'
+    ],
+    status: 'Available',
+    owner: {
+      id: 'owner-1',
+      name: 'Alexandra Chen',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
+      rating: 4.9,
+      responseTime: 'Under 1 hour',
+      responseRate: 98,
+      contactEmail: 'alexandra@example.com',
+      contactPhone: '+1 (555) 123-4567'
+    },
+    reviews: [
+      {
+        id: 'review-1',
+        userName: 'Michael Thompson',
+        userImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e',
+        rating: 5,
+        comment: 'Exceptional property with unmatched views. Alexandra was a fantastic host who went above and beyond.',
+        date: '2025-06-01',
+        helpful: 15,
+        notHelpful: 0
+      },
+      {
+        id: 'review-2',
+        userName: 'Sarah Mitchell',
+        userImage: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f',
+        rating: 5,
+        comment: 'The attention to detail in this penthouse is remarkable. Every amenity has been thoughtfully considered.',
+        date: '2025-05-28',
+        helpful: 12,
+        notHelpful: 1
+      }
+    ],
+    createdAt: '2025-01-15T08:00:00.000Z',
+    updatedAt: '2025-06-01T10:30:00.000Z',
+    views: 1250
+  }
+};
+
+export const ListingPreview = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [listing, setListing] = useState<ListingDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeImage, setActiveImage] = useState(0);
+  const [showContact, setShowContact] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      try {
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // In a real app, this would be an API call
+        const foundListing = mockListings[id || ''];
+        
+        if (!foundListing) {
+          throw new Error('Listing not found');
+        }
+
+        // Update views
+        const updatedListing = {
+          ...foundListing,
+          views: foundListing.views + 1
+        };
+
+        // Save to localStorage to persist the view count
+        const storedListings = JSON.parse(localStorage.getItem('listings') || '{}');
+        localStorage.setItem('listings', JSON.stringify({
+          ...storedListings,
+          [id || '']: updatedListing
+        }));
+
+        setListing(updatedListing);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'An error occurred');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchListing();
+    }
+  }, [id]);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!listing || !message.trim()) return;
+
+    try {
+      // Simulate sending message
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Save message to localStorage
+      const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+      const newMessage = {
+        id: Date.now().toString(),
+        listingId: listing.id,
+        ownerId: listing.owner.id,
+        message,
+        createdAt: new Date().toISOString()
+      };
+      
+      localStorage.setItem('messages', JSON.stringify([...messages, newMessage]));
+      
+      // Clear form and close modal
+      setMessage('');
+      setShowContact(false);
+      
+      // Show success toast (you would implement this)
+      alert('Message sent successfully!');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Failed to send message. Please try again.');
+    }
+  };
+
+  const handleVote = (reviewId: string, type: 'helpful' | 'notHelpful') => {
+    if (!listing) return;
+
+    const updatedListing = {
+      ...listing,
+      reviews: listing.reviews.map(review => {
+        if (review.id === reviewId) {
+          return {
+            ...review,
+            [type]: review[type] + 1
+          };
+        }
+        return review;
+      })
+    };
+
+    setListing(updatedListing);
+
+    // Save to localStorage
+    const storedListings = JSON.parse(localStorage.getItem('listings') || '{}');
+    localStorage.setItem('listings', JSON.stringify({
+      ...storedListings,
+      [listing.id]: updatedListing
+    }));
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse space-y-8">
+            <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg" />
+            <div className="space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-3/4" />
+              <div className="h-4 bg-gray-200 rounded w-1/2" />
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !listing) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+          <div className="animate-gently-appear">
+            <h1 className="text-2xl font-semibold text-gray-900 mb-4">
+              {error || 'Listing not found'}
+            </h1>
+            <button
+              onClick={() => navigate(-1)}
+              className="text-primary hover:text-primary-dark transition-colors"
+            >
+              ← Go back
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        {/* Image Gallery */}
+        <div className="animate-gently-appear mb-8">
+          <div className="relative aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+            <img
+              src={listing.images[activeImage]}
+              alt={listing.title}
+              className="w-full h-full object-cover transition-opacity duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {listing.images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveImage(idx)}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                    idx === activeImage
+                      ? 'bg-white'
+                      : 'bg-white/50 hover:bg-white/75'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Thumbnails */}
+          <div className="grid grid-cols-4 gap-4 mt-4">
+            {listing.images.map((image, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveImage(idx)}
+                className={`relative rounded-lg overflow-hidden transition-transform hover:scale-105 ${
+                  idx === activeImage ? 'ring-2 ring-primary' : ''
+                }`}
+              >
+                <img
+                  src={image}
+                  alt={`View ${idx + 1}`}
+                  className="w-full h-24 object-cover"
+                />
+                {idx === activeImage && (
+                  <div className="absolute inset-0 bg-primary/10" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-8 animate-fade-up delay-1">
+            <div>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    {listing.title}
+                  </h1>
+                  <p className="mt-2 text-gray-600">{listing.location}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold text-primary">
+                    ${listing.price.toLocaleString()}
+                    <span className="text-sm font-normal text-gray-500">
+                      {listing.type === 'Property' ? '/month' : '/service'}
+                    </span>
+                  </p>
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      listing.status === 'Available'
+                        ? 'bg-green-100 text-green-800'
+                        : listing.status === 'Reserved'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    {listing.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="prose prose-lg">
+              <h2 className="text-xl font-semibold text-gray-900">Description</h2>
+              <p className="text-gray-600">{listing.description}</p>
+            </div>
+
+            {/* Features */}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Features
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                {listing.features.map((feature, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center space-x-2 text-gray-600"
+                  >
+                    <svg
+                      className="h-5 w-5 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Amenities */}
+            {listing.type === 'Property' && listing.amenities && (
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Amenities
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {listing.amenities.map((amenity, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center space-x-2 text-gray-600"
+                    >
+                      <svg
+                        className="h-5 w-5 text-primary"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span>{amenity}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Reviews */}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Reviews
+              </h2>
+              <div className="space-y-6">
+                {listing.reviews.map((review) => (
+                  <div
+                    key={review.id}
+                    className="bg-white rounded-lg p-6 shadow-sm hover:shadow transition-shadow"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-4">
+                        {review.userImage && (
+                          <img
+                            src={review.userImage}
+                            alt={review.userName}
+                            className="w-12 h-12 rounded-full"
+                          />
+                        )}
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {review.userName}
+                          </h4>
+                          <time className="text-sm text-gray-500">
+                            {new Date(review.date).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </time>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <svg
+                            key={idx}
+                            className={`w-5 h-5 ${
+                              idx < review.rating
+                                ? 'text-yellow-400'
+                                : 'text-gray-300'
+                            }`}
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="mt-4 text-gray-600">{review.comment}</p>
+                    <div className="mt-4 flex items-center space-x-4">
+                      <button
+                        onClick={() => handleVote(review.id, 'helpful')}
+                        className="flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700"
+                      >
+                        <svg
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                          />
+                        </svg>
+                        <span>Helpful ({review.helpful})</span>
+                      </button>
+                      <button
+                        onClick={() => handleVote(review.id, 'notHelpful')}
+                        className="flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700"
+                      >
+                        <svg
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m-7 10v2a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"
+                          />
+                        </svg>
+                        <span>Not Helpful ({review.notHelpful})</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8 space-y-6">
+              {/* Owner Card */}
+              <div className="bg-white rounded-lg shadow-sm p-6 animate-fade-up delay-2">
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={listing.owner.image}
+                    alt={listing.owner.name}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div>
+                    <h3 className="font-medium text-gray-900">
+                      {listing.owner.name}
+                    </h3>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <svg
+                        className="h-4 w-4 text-yellow-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span className="ml-1">
+                        {listing.owner.rating} rating
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <dl className="mt-4 space-y-2 text-sm text-gray-600">
+                  <div className="flex justify-between">
+                    <dt>Response rate:</dt>
+                    <dd>{listing.owner.responseRate}%</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt>Response time:</dt>
+                    <dd>{listing.owner.responseTime}</dd>
+                  </div>
+                </dl>
+                <button
+                  onClick={() => setShowContact(true)}
+                  className="mt-4 w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                >
+                  Contact Owner
+                </button>
+              </div>
+
+              {/* Statistics */}
+              <div className="bg-white rounded-lg shadow-sm p-6 animate-fade-up delay-3">
+                <dl className="space-y-2 text-sm text-gray-600">
+                  <div className="flex justify-between">
+                    <dt>Listed on:</dt>
+                    <dd>
+                      {new Date(listing.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt>Views:</dt>
+                    <dd>{listing.views}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Contact Modal */}
+      {showContact && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 animate-gently-appear">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Contact {listing.owner.name}
+            </h3>
+            <form onSubmit={handleContactSubmit}>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Write your message here..."
+                required
+              />
+              <div className="mt-4 flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setShowContact(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-500"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                >
+                  Send Message
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      
+      <Footer />
+    </div>
+  );
+};
