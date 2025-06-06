@@ -27,7 +27,36 @@ export interface UserProfile {
   };
 }
 
-export type Role = "Explorer" | "Service Provider" | "Accommodation Provider";
+export enum UserRole {
+  Explorer = "Explorer",
+  ServiceProvider = "Service Provider",
+  AccommodationProvider = "Accommodation Provider",
+}
+
+export type Role = UserRole;
+
+export interface ServiceProfile {
+  id: string;
+  userId: string;
+  serviceName: string;
+  description: string;
+  category: string;
+  pricing: string;
+  availability: string;
+  // Add other service-specific fields
+}
+
+export interface AccommodationProfile {
+  id: string;
+  userId: string;
+  propertyName: string;
+  description: string;
+  type: string;
+  price: number;
+  location: string;
+  amenities: string[];
+  // Add other accommodation-specific fields
+}
 
 export interface User {
   id: string;
@@ -40,7 +69,12 @@ export interface User {
   areaOfSpecialization?: string;
   about?: string;
   imageUrl?: string;
+  avatar?: string;
   role: Role;
+  ServiceProfile?: ServiceProfile;
+  AccommodationProfile?: AccommodationProfile;
+  ServiceDetails?: ServiceProfile[];
+  AccommodationDetails?: AccommodationProfile[];
   settings: {
     emailNotifications: boolean;
     pushNotifications: boolean;

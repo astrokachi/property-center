@@ -106,7 +106,8 @@ export const DashboardHome = () => {
           {/* Welcome Section */}
           <div className="bg-white rounded-lg p-6 shadow-sm animate-slide-up">
             <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {user?.name || "User"}
+              Welcome back,{" "}
+              {user ? `${user.firstName} ${user.lastName}` : "User"}
             </h1>
             <p className="mt-1 text-gray-600">
               Here's what's happening with your properties

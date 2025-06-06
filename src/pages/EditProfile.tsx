@@ -452,7 +452,7 @@ export const EditProfile: React.FC = () => {
                       />
                     </div>
 
-                    {user.role === "Service Provider" && (
+                    {user?.role === "Service Provider" && (
                       <div>
                         <label
                           htmlFor="areaOfSpecialization"

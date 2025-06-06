@@ -5,6 +5,34 @@ import { useMutation } from "@tanstack/react-query";
 import svg from "../assets/Group 36.svg";
 import peek from "../assets/Remove red eye.png";
 import Cookies from "js-cookie";
+import { useStore } from "../hooks/useStore";
+import { UserRole } from "../types/profile";
+
+interface SignUpData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
+interface SignUpResponse {
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: UserRole;
+    settings: {
+      emailNotifications: boolean;
+      pushNotifications: boolean;
+      marketingEmails: boolean;
+      profileVisibility: "public" | "private";
+    };
+  };
+  token: string;
+}
+
 interface Errors {
   firstName?: string;
   lastName?: string;
@@ -35,6 +63,15 @@ export const SignUpForm = ({ setSuccess }: Props) => {
   const [showInfo, setShowInfo] = useState(false);
   const navigate = useNavigate();
   const number = useRef<HTMLInputElement | null>(null);
+  const store = useStore();
+  const [currentRole, setCurrentRole] = useState<UserRole>(UserRole.Explorer);
+  const [formData, setFormData] = useState<SignUpData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    role: UserRole.Explorer,
+  });
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -66,14 +103,25 @@ export const SignUpForm = ({ setSuccess }: Props) => {
     }
   };
 
-  const signup = useMutation((data: any) =>
-    axios
-      .post(`${store.url}/auth/signup`, data, { withCredentials: true })
-      .then((res) => res.data)
-      .catch((error) => {
-        return Promise.reject(error); // Re-throw the error to be caught by react-query
-      })
-  );
+  const signup = useMutation<SignUpResponse, Error, SignUpData>({
+    mutationFn: async (data: SignUpData) => {
+      try {
+        const response = await axios.post(`${store.url}/auth/signup`, data, {
+          withCredentials: true,
+        });
+        return response.data;
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    },
+    onSuccess: (response) => {
+      store.setAuth({
+        user: response.user,
+        token: response.token,
+      });
+      navigate("/verify");
+    },
+  });
 
   const handleSignUp = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -94,14 +142,14 @@ export const SignUpForm = ({ setSuccess }: Props) => {
         lastName: lastnameRef.current.value,
         email: emailRef.current.value,
         password: passwordRef.current.value,
-        role: profileRef.current.value,
+        role: currentRole,
       };
       store.setAuth({
         ...store.auth,
         firstName: firstnameRef.current.value,
         lastName: lastnameRef.current.value,
         email: emailRef.current.value,
-        role: role,
+        role: currentRole,
       });
       try {
         await signup.mutateAsync(data);
@@ -125,6 +173,13 @@ export const SignUpForm = ({ setSuccess }: Props) => {
       }
     } else return;
   };
+
+  const handleProfileClick = (role: UserRole, e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrentRole(role);
+    setFormData((prev) => ({ ...prev, role }));
+  };
+
   return (
     <div
       className="w-full flex h-full flex-col justify-center"
@@ -324,14 +379,16 @@ export const SignUpForm = ({ setSuccess }: Props) => {
               >
                 <div
                   className="hover:bg-grey cursor-pointer px-6 trans"
-                  onClick={(e) => handleProfileClick(Role.seeker, e)}
+                  onClick={(e) => handleProfileClick(UserRole.Explorer, e)}
                 >
                   explorer
                 </div>
 
                 <div
                   className="hover:bg-grey cursor-pointer px-6 trans"
-                  onClick={(e) => handleProfileClick(Role.serviceProvider, e)}
+                  onClick={(e) =>
+                    handleProfileClick(UserRole.ServiceProvider, e)
+                  }
                 >
                   Service Provider
                 </div>
@@ -339,7 +396,7 @@ export const SignUpForm = ({ setSuccess }: Props) => {
                 <div
                   className="hover:bg-grey cursor-pointer px-6 trans"
                   onClick={(e) =>
-                    handleProfileClick(Role.accommodationProvider, e)
+                    handleProfileClick(UserRole.AccommodationProvider, e)
                   }
                 >
                   Accommodation Provider
@@ -397,7 +454,7 @@ export const SignUpForm = ({ setSuccess }: Props) => {
               setClicked(true);
               handleSignUp(e);
             }}
-            disabled={signup.isLoading}
+            disabled={signup.isPending}
             type="submit"
             className="w-full py-2 px-4 bg-primary text-white rounded-full disabled:bg-disabled btn-trans disabled:cursor-not-allowed"
           >

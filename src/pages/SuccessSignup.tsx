@@ -18,7 +18,10 @@ export const SuccessSignup = () => {
   const handleClick = () => {
     setAnimate(false); // Trigger exit animation
     setTimeout(() => {
-      if (user?.role === "provider") {
+      if (
+        user?.role === "Service Provider" ||
+        user?.role === "Accommodation Provider"
+      ) {
         navigate("/onboarding");
       } else {
         navigate("/signin");

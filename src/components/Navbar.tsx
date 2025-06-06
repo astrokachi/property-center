@@ -200,7 +200,7 @@ export const Navbar = () => {
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-        );  
+        );
     }
   };
 
@@ -448,7 +448,7 @@ export const Navbar = () => {
               ) : (
                 <div className="flex items-center space-x-4">
                   <Link
-                    to="/login"
+                    to="/signin"
                     className="text-sm font-medium text-gray-700 hover:text-primary transition-colors"
                   >
                     Log in
@@ -573,7 +573,7 @@ export const Navbar = () => {
             ) : (
               <div className="px-3 py-2 space-y-2">
                 <Link
-                  to="/login"
+                  to="/signin"
                   className="block w-full text-center px-4 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Log in

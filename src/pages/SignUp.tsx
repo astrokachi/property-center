@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMockAuth } from "../context/MockAuthContext";
+import { UserRole } from "../types/profile";
 
 interface FormData {
   firstName: string;
@@ -8,7 +9,7 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
-  role: "user" | "provider";
+  role: UserRole;
   acceptTerms: boolean;
 }
 
@@ -32,7 +33,7 @@ const SignUp = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user",
+    role: UserRole.Explorer,
     acceptTerms: false,
   });
 
@@ -212,9 +213,11 @@ const SignUp = () => {
               <div className="mt-1 grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  onClick={() => setFormData({ ...formData, role: "user" })}
+                  onClick={() =>
+                    setFormData({ ...formData, role: UserRole.Explorer })
+                  }
                   className={`px-4 py-3 rounded-xl border ${
-                    formData.role === "user"
+                    formData.role === "Explorer"
                       ? "border-primary bg-primary/5 text-primary"
                       : "border-gray-300 text-gray-700 hover:border-primary/50"
                   } transition-colors`}
@@ -223,9 +226,11 @@ const SignUp = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFormData({ ...formData, role: "provider" })}
+                  onClick={() =>
+                    setFormData({ ...formData, role: UserRole.ServiceProvider })
+                  }
                   className={`px-4 py-3 rounded-xl border ${
-                    formData.role === "provider"
+                    formData.role === "Service Provider"
                       ? "border-primary bg-primary/5 text-primary"
                       : "border-gray-300 text-gray-700 hover:border-primary/50"
                   } transition-colors`}

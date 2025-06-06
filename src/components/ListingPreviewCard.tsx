@@ -6,7 +6,8 @@ interface Props {
   img: string;
   name: string;
   location: string;
-  
+  price?: string;
+  id?: string;
 }
 
 export const ListingPreviewCard = ({ img, name, location }: Props) => {
@@ -28,9 +29,6 @@ export const ListingPreviewCard = ({ img, name, location }: Props) => {
         <img src={locationImg} alt="" />
         <p className=" text-base font-normal leading-5 my-2">{location}</p>
       </div>
-
-      
-    
     </div>
   );
 };

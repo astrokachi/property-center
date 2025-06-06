@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-import { User } from "../types/profile";
+import { User, UserRole } from "../types/profile";
 
 interface AuthContextType {
   user: User | null;
@@ -17,7 +19,7 @@ interface SignupData {
   lastName: string;
   email: string;
   password: string;
-  role: "Explorer" | "Service Provider" | "Accommodation Provider";
+  role: UserRole;
 }
 
 const defaultSettings = {

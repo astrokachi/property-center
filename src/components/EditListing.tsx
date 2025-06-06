@@ -3,11 +3,14 @@ import profileImg from "../assets/profileImg.svg";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { EditListingForm } from "./EditListingForm";
+import { useStore } from "../hooks/useStore";
+import { useAuth } from "../hooks/useAuth";
 
 export const EditListing = () => {
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
   const path = useLocation().pathname;
-  const store = {};
+  const store = useStore();
+  const { handleSignOut } = useAuth();
 
   return (
     <div className="flex w-max-screen h-screen overflow-hidden">
@@ -30,7 +33,7 @@ export const EditListing = () => {
                   ${path === "/" && "text-primary"}`}
             >
               <h1>
-                {store.auth.firstName} {store.auth.lastName}
+                {store.auth.user?.firstName} {store.auth.user?.lastName}
               </h1>
               <svg
                 className={` ml-[2px] trans ${
@@ -70,7 +73,7 @@ export const EditListing = () => {
                 </Link>
 
                 <p
-                  onClick={() => handleSignOut(store)}
+                  onClick={handleSignOut}
                   className="cursor-pointer p-2 trans hover:bg-[#95A8EE29] mb-1"
                 >
                   Sign out
