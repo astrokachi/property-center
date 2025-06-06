@@ -514,9 +514,9 @@ export const Navbar = () => {
               Home
             </Link>
             <Link
-              to="/explore"
+              to="/explore/accommodations"
               className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                location.pathname === "/explore"
+                location.pathname === "/explore/accommodations"
                   ? "text-primary bg-primary/5"
                   : "text-gray-700 hover:bg-gray-50"
               } transition-colors`}
